@@ -1,4 +1,5 @@
 using DataAccess;
+using GalaxyBackendTask.ServiceBinding;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +15,7 @@ op.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 var app = builder.Build();
-
+builder.Services.InjectServices();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
