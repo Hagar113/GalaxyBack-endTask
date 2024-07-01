@@ -16,22 +16,20 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Repo
 {
-    public class AuthenticationRepo:IAuthenticationRepo
+    public class AuthenticationRepo : IAuthenticationRepo
     {
         private readonly ApplicationDBContext _context;
-        private readonly Encryption _encryption;
 
-        public AuthenticationRepo(ApplicationDBContext context, Encryption encryption)
+        public AuthenticationRepo(ApplicationDBContext context)
         {
             _context = context;
-            _encryption = encryption;
         }
         public async Task<bool> UserRegister(RegisterRequest registerRequest)
         {
             try
             {
-
-                string encryptedPassword = _encryption.Encrypt(registerRequest.Password);
+                Encryption encryption = new Encryption();
+                string encryptedPassword = encryption.Encrypt(registerRequest.Password);
 
 
                 Users newUser = new Users
@@ -39,7 +37,7 @@ namespace DataAccess.Repo
                     userName = registerRequest.userName,
                     Email = registerRequest.Email,
                     passWord = encryptedPassword,
-                    Mobile = registerRequest.Mopile,
+                    Mobile = registerRequest.Mobile,
                 };
 
 
@@ -63,12 +61,14 @@ namespace DataAccess.Repo
 
             if (_password.Length < 6)
                 sb.Append("The password must be at least 6 characters long" + Environment.NewLine);
-            if (!(Regex.IsMatch(_password, "[a-z]")
-               && Regex.IsMatch(_password, "[A-Z]")
-               && Regex.IsMatch(_password, "[0-9]")))
+            if (!(Regex.IsMatch(_password, "[a-z]")     // Check for at least one lowercase letter
+                 && Regex.IsMatch(_password, "[A-Z]")    // Check for at least one uppercase letter
+                 && Regex.IsMatch(_password, "[0-9]")    // Check for at least one digit
+                 && Regex.IsMatch(_password, "[^a-zA-Z0-9]"))) // Check for at least one special character
             {
-                sb.Append("The password must be alphanumeric" + Environment.NewLine);
+                sb.Append("The password must contain at least one lowercase letter, one uppercase letter, one number, and one special character." + Environment.NewLine);
             }
+
 
             return sb.ToString();
         }
@@ -113,36 +113,12 @@ namespace DataAccess.Repo
             }
         }
         #endregion
-        public async Task<int> CreateUser(RegisterRequest user)
-        {
-            try
-            {
-                Users newUser = new Users
-                {
-                    userName = user.userName,
 
-                    Email = user.Email,
-                    Mobile = user.Mopile,
-
-                    isActive = true,
-                    token = user.token
-                };
-
-                await _context.users.AddAsync(newUser);
-                await _context.SaveChangesAsync();
-
-                return newUser.id;
-            }
-            catch
-            {
-                return 0;
-            }
-        }
         public bool CheckRequestedObj(RegisterRequest registerRequest)
         {
             if (string.IsNullOrEmpty(registerRequest.userName) ||
 
-                string.IsNullOrEmpty(registerRequest.Mopile) ||
+                string.IsNullOrEmpty(registerRequest.Mobile) ||
                 string.IsNullOrEmpty(registerRequest.Email) ||
                 string.IsNullOrEmpty(registerRequest.Password))
             {
@@ -161,10 +137,10 @@ namespace DataAccess.Repo
 
             var identity = new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
-                new Claim(ClaimTypes.Name, user.userName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.MobilePhone, user.Mobile)
+        new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
+        new Claim(ClaimTypes.Name, user.userName),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.MobilePhone, user.Mobile)
 
             });
 
@@ -181,4 +157,4 @@ namespace DataAccess.Repo
             return jwtTokenHandler.WriteToken(token);
         }
     }
-}
+    }

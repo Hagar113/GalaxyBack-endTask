@@ -22,7 +22,7 @@ namespace Infrastructure.helpers.Helper
         0xcd,
         0xef};
 
-        private string EncryptionKey = "!38#83!@$%38#83a#de@388Ad";
+        private string EncryptionKey = "GalaxySmartSolutions@123456";
 
         public string Decrypt(string Input)
         {

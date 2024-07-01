@@ -39,7 +39,7 @@ namespace GalaxyBackendTask.Controllers
                 return response;
             }
 
-            if (await _authProvider.AuthenticationRepo.checkIfEmailOrPhoneExists(registerRequest.Email, registerRequest.Mopile))
+            if (await _authProvider.AuthenticationRepo.checkIfEmailOrPhoneExists(registerRequest.Email, registerRequest.Mobile))
             {
                 response = BaseResponse.Create(HttpStatusCode.BadRequest, null, "Email or phone number has been used before");
                 return response;

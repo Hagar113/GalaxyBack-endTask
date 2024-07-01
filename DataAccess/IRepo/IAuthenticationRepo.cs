@@ -15,6 +15,5 @@ namespace DataAccess.IRepo
         Task<bool> checkIfEmailOrPhoneExists(string _email, string _phone);
         string CheckPasswordStrength(string _password);
         Task<LoginResponse> Login(LoginRequest loginRequest);
-        Task<int> CreateUser(RegisterRequest user);
     }
 }
