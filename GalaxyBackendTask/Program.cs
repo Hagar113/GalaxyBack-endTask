@@ -15,6 +15,7 @@ op.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 builder.Services.InjectServices();
+builder.Services.AddCors();
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -22,7 +23,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors(
+   corsPolicyBuilder => corsPolicyBuilder
+   .AllowAnyHeader()
+   .AllowAnyMethod()
+   .AllowAnyOrigin()
+);
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
