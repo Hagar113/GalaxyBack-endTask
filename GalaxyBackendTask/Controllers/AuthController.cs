@@ -84,7 +84,7 @@ namespace GalaxyBackendTask.Controllers
                 return response;
             }
 
-            response = BaseResponse.Create(HttpStatusCode.OK, result, "logged registered");
+            response = BaseResponse.Create(HttpStatusCode.OK, result, "logged successfully");
             return response;
         }
     }
