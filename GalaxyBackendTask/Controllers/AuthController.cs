@@ -22,44 +22,44 @@ namespace GalaxyBackendTask.Controllers
             _authProvider = authProvider;
         }
         [HttpPost("Register")]
-        public async Task<BaseResponse> Register(RegisterRequest registerRequest)
+        public async Task<GeneralResponse> Register(RegisterRequest registerRequest)
         {
-            BaseResponse response = BaseResponse.Create(HttpStatusCode.OK, null, "");
+            GeneralResponse response = GeneralResponse.Create(HttpStatusCode.OK, null, "");
             string errorDateEntered = "Please make sure you have entered all data";
 
             if (registerRequest == null)
             {
-                response = BaseResponse.Create(HttpStatusCode.BadRequest, null, "data not found");
+                response = GeneralResponse.Create(HttpStatusCode.BadRequest, null, "data not found");
                 return response;
             }
 
             if (!_authProvider.AuthenticationRepo.CheckRequestedObj(registerRequest))
             {
-                response = BaseResponse.Create(HttpStatusCode.BadRequest, null, "The data is incorrect");
+                response = GeneralResponse.Create(HttpStatusCode.BadRequest, null, "The data is incorrect");
                 return response;
             }
 
             if (await _authProvider.AuthenticationRepo.checkIfEmailOrPhoneExists(registerRequest.Email, registerRequest.Mobile))
             {
-                response = BaseResponse.Create(HttpStatusCode.BadRequest, null, "Email or phone number has been used before");
+                response = GeneralResponse.Create(HttpStatusCode.BadRequest, null, "Email or phone number has been used before");
                 return response;
             }
 
             var validation = _authProvider.AuthenticationRepo.CheckPasswordStrength(registerRequest.Password);
             if (!string.IsNullOrEmpty(validation))
             {
-                response = BaseResponse.Create(HttpStatusCode.BadRequest, null, validation);
+                response = GeneralResponse.Create(HttpStatusCode.BadRequest, null, validation);
                 return response;
             }
 
             var registered = await _authProvider.AuthenticationRepo.UserRegister(registerRequest);
             if (registered)
             {
-                response = BaseResponse.Create(HttpStatusCode.OK, null, "successfully registered");
+                response = GeneralResponse.Create(HttpStatusCode.OK, null, "successfully registered");
             }
             else
             {
-                response = BaseResponse.Create(HttpStatusCode.InternalServerError, null, "An error occurred during registration");
+                response = GeneralResponse.Create(HttpStatusCode.InternalServerError, null, "An error occurred during registration");
             }
 
             return response;
@@ -67,24 +67,24 @@ namespace GalaxyBackendTask.Controllers
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<BaseResponse> Login([FromBody] LoginRequest loginRequest)
+        public async Task<GeneralResponse> Login([FromBody] LoginRequest loginRequest)
         {
-            BaseResponse response = BaseResponse.Create(HttpStatusCode.OK, null, "");
+            GeneralResponse response = GeneralResponse.Create(HttpStatusCode.OK, null, "");
 
             if (loginRequest == null)
             {
-                response = BaseResponse.Create(HttpStatusCode.BadRequest, null, "data not found");
+                response = GeneralResponse.Create(HttpStatusCode.BadRequest, null, "data not found");
                 return response;
             }
 
             var result = await _authProvider.AuthenticationRepo.Login(loginRequest);
             if (result == null)
             {
-                response = BaseResponse.Create(HttpStatusCode.NotFound, null, "user not found");
+                response = GeneralResponse.Create(HttpStatusCode.NotFound, null, "user not found");
                 return response;
             }
 
-            response = BaseResponse.Create(HttpStatusCode.OK, result, "logged successfully");
+            response = GeneralResponse.Create(HttpStatusCode.OK, result, "logged successfully");
             return response;
         }
     }
