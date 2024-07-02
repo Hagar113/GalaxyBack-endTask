@@ -67,18 +67,25 @@ namespace GalaxyBackendTask.Controllers
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
+        public async Task<BaseResponse> Login([FromBody] LoginRequest loginRequest)
         {
+            BaseResponse response = BaseResponse.Create(HttpStatusCode.OK, null, "");
+
             if (loginRequest == null)
-                return BadRequest();
+            {
+                response = BaseResponse.Create(HttpStatusCode.BadRequest, null, "data not found");
+                return response;
+            }
 
             var result = await _authProvider.AuthenticationRepo.Login(loginRequest);
             if (result == null)
             {
-                return NotFound(new { Message = "user not found" });
+                response = BaseResponse.Create(HttpStatusCode.NotFound, null, "user not found");
+                return response;
             }
 
-            return Ok(result);
+            response = BaseResponse.Create(HttpStatusCode.OK, result, "logged registered");
+            return response;
         }
     }
 }
