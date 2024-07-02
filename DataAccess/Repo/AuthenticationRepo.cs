@@ -85,7 +85,10 @@ namespace DataAccess.Repo
                 {
                     return null;
                 }
-
+                else
+                {
+                    user.isActive = true;
+                }
                 Encryption encryption = new Encryption();
                 if (encryption.Encrypt(loginRequest.password) != user.passWord)
                 {
